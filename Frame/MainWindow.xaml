@@ -4,7 +4,7 @@
         Title="Call Of Pixels" Height="450" Width="800">
     <Grid Name="Main">
         <Grid>
-                <Canvas Name="GrilleCanvas" Background="White" />
-            </Grid>
+            <Canvas Name="GrilleCanvas" Background="White" />
+        </Grid>
     </Grid>
 </Window>
