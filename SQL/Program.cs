@@ -115,7 +115,7 @@ class SQLProgram
 
         List<Pixel> pixels = new List<Pixel>
         {
-            new Pixel { Name = "May", Cos = "15,41", Color = "#3ed63c" },
+            new Pixel { Name = "May", Cos = "15,41", Color = "#ffffff" },
             new Pixel { Name = "Raff", Cos = "53,124", Color = "#ff6e4f" },
             new Pixel { Name = "AH", Cos = "200,500", Color = "#123abc" }
         };
