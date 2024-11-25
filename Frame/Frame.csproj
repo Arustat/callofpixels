@@ -9,4 +9,15 @@
         <ApplicationIcon>img\cof.ico</ApplicationIcon>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Update="Pixel.cs">
+        <DependentUpon>MainWindow.xaml.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
+      <PackageReference Include="Xceed.Products.Wpf.Toolkit.Full" Version="4.6.24151.1544" />
+    </ItemGroup>
+
 </Project>
