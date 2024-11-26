@@ -4,7 +4,7 @@ namespace SQL;
 public class SqlServices
 {
     // Chaîne de connexion fixe à la base de données 
-    private readonly string _connectionString = "Server=localhost;Database=callofpixel;Uid=root;";
+    private readonly string _connectionString = "Server=192.168.1.97;Database=callofpixels;Uid=sqlcommuser;Pwd=GHU7L8jxrs4RBjsB;";
 
     // Ajout de Pixel
     public void AddPixel(Pixel pixel)
@@ -18,7 +18,7 @@ public class SqlServices
             Console.WriteLine("Connected\n");
 
             // SQL pour ajouter un pixel
-            var sql = "INSERT INTO jeu1 (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
+            var sql = "INSERT INTO jeu (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
             connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
 
             Console.WriteLine($"{pixel.Name}'s Pixel with {pixel.Color} color added in position {pixel.Cos} on {DateTime.Now}\n");
@@ -37,13 +37,13 @@ public class SqlServices
             Console.WriteLine("Connected\n");
 
             // Requête pour vérifier si un pixel existe déjà aux coordonnées spécifiées
-            var searchSql = "SELECT COUNT(*) FROM jeu1 WHERE Cos = @Cos";
+            var searchSql = "SELECT COUNT(*) FROM jeu WHERE Cos = @Cos";
             int pixelCount = connection.ExecuteScalar<int>(searchSql, new { pixel.Cos });
 
             if (pixelCount > 0)
             {
                 // Si un pixel existe, update
-                var updateSql = "UPDATE jeu1 SET Name = @Name, Color = @Color, Date = NOW() WHERE Cos = @Cos";
+                var updateSql = "UPDATE jeu SET Name = @Name, Color = @Color, Date = NOW() WHERE Cos = @Cos";
                 connection.Execute(updateSql, new { pixel.Name, pixel.Cos, pixel.Color });
 
                 Console.WriteLine($"{pixel.Name}'s Pixel updated with {pixel.Color} color at position {pixel.Cos}\n");
@@ -54,7 +54,7 @@ public class SqlServices
                 
                 Console.WriteLine("Not an existing pixel, creating a new one\n");
                 
-                var sql = "INSERT INTO jeu1 (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
+                var sql = "INSERT INTO jeu (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
                 connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
                 
                 Console.WriteLine($"{pixel.Name}'s Pixel with {pixel.Color} color added in position {pixel.Cos} on {DateTime.Now}\n");
@@ -75,13 +75,13 @@ public class SqlServices
             foreach (var pixel in pixels)
             {
                 // Requête pour vérifier si un pixel existe déjà aux coordonnées spécifiées
-                var searchSql = "SELECT COUNT(*) FROM jeu1 WHERE Cos = @Cos";
+                var searchSql = "SELECT COUNT(*) FROM jeu WHERE Cos = @Cos";
                 int pixelCount = connection.ExecuteScalar<int>(searchSql, new { pixel.Cos });
 
                 if (pixelCount > 0)
                 {
                     // Si un pixel existe, update
-                    var updateSql = "UPDATE jeu1 SET Name = @Name, Color = @Color, Date = NOW() WHERE Cos = @Cos";
+                    var updateSql = "UPDATE jeu SET Name = @Name, Color = @Color, Date = NOW() WHERE Cos = @Cos";
                     connection.Execute(updateSql, new { pixel.Name, pixel.Cos, pixel.Color });
 
                     Console.WriteLine($"{pixel.Name}'s Pixel updated with {pixel.Color} color at position {pixel.Cos}\n");
@@ -92,7 +92,7 @@ public class SqlServices
                 
                     Console.WriteLine("Not an existing pixel, creating a new one\n");
                 
-                    var sql = "INSERT INTO jeu1 (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
+                    var sql = "INSERT INTO jeu (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
                     connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
                 
                     Console.WriteLine($"{pixel.Name}'s Pixel with {pixel.Color} color added in position {pixel.Cos} on {DateTime.Now}\n");
@@ -110,7 +110,7 @@ public class SqlServices
             Console.WriteLine("Connected\n");
 
             // Requête pour récupérer tous les pixels de la table
-            var sql = "SELECT Id, Name, Cos, Color FROM jeu1";
+            var sql = "SELECT Id, Name, Cos, Color FROM jeu";
 
             // Exécuter la requête et mapper les résultats à la classe Pixel
             var pixels = connection.Query<Pixel>(sql).ToList();
@@ -135,7 +135,7 @@ class SQLProgram
         Console.WriteLine("=======================================");
         Console.WriteLine("Debuging mode...");
         
-
+        
         var sqlCommTest = new SqlServices();
 
         List<Pixel> pixels = new List<Pixel>
