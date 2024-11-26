@@ -25,11 +25,10 @@ public class ColorPalette: Form
             }
         };
         
-        int margin = 50;
-        colorButton.FlatAppearance.BorderSize = 0;
+        
         colorButton.Region = new Region(new Rectangle(0, 0, 100, 100)); // Cercle parfait
         colorButton.Location = new Point((this.ClientSize.Width - colorButton.Width) / 2, 
-            this.ClientSize.Height - colorButton.Height - margin);
+            this.ClientSize.Height - colorButton.Height - 10);
         
         //Ajout de l'événement au clic du bouton
         colorButton.Click += ButtonClick;

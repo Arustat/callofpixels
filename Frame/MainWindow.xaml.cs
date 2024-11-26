@@ -3,9 +3,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Forms;
-using Frame;
-using Color = System.Drawing.Color;
 
 namespace Frame
 {
@@ -13,14 +10,16 @@ namespace Frame
     {
         private ScaleTransform _scaleTransform = new ScaleTransform(1, 1); // Pour gérer le zoom
         private Brush _currentColor = Brushes.White; // La couleur actuelle des pixels
+        private string _pseudo; // Nouveau champ pour le pseudo
 
-        public MainWindow()
+        public MainWindow(string pseudo)
         {
             InitializeComponent();
+            _pseudo = pseudo; // Enregistrer le pseudo
 
             // Appliquer le ScaleTransform à la grille pour permettre le zoom
             GrilleCanvas.LayoutTransform = _scaleTransform;
-
+            
             // Générer la grille de pixels
             Grille(100, 200, 20); // Grille de 100x200 avec des pixels de taille 20x20
             
@@ -36,7 +35,7 @@ namespace Frame
             // Ajouter l'événement MouseWheel pour le zoom
             this.MouseWheel += MainWindow_MouseWheel;
         }
-            
+
         // Méthode pour recevoir la nouvelle couleur et mettre à jour _currentColor
         private void OnColorChanged(System.Drawing.Color newColor)
         {
