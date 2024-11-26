@@ -2,11 +2,12 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
         <ApplicationIcon>img\cof.ico</ApplicationIcon>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +17,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Reference Include="System.Windows.Forms" />
+        <PackageReference Include="Egorozh.ColorPicker.WPF" Version="5.0.0" />
+        <PackageReference Include="Egorozh.ColorPicker.WPF.Dialog" Version="5.0.0" />
+        <PackageReference Include="Egorozh.ColorPicker.WPF.Dialog.MahApps" Version="2.4.3.2" />
+        <PackageReference Include="System.Reactive.Windows.Forms" Version="6.0.1" />
       <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
       <PackageReference Include="Xceed.Products.Wpf.Toolkit.Full" Version="4.6.24151.1544" />
     </ItemGroup>
