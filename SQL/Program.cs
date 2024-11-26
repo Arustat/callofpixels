@@ -100,6 +100,28 @@ public class SqlServices
             }
         }
     }
+    
+    public List<Pixel> RetrievePixelList()
+    {
+        using (var connection = new MySqlConnection(_connectionString))
+        {
+            Console.WriteLine("Connecting...");
+            connection.Open();
+            Console.WriteLine("Connected\n");
+
+            // Requête pour récupérer tous les pixels de la table
+            var sql = "SELECT Id, Name, Cos, Color FROM jeu1";
+
+            // Exécuter la requête et mapper les résultats à la classe Pixel
+            var pixels = connection.Query<Pixel>(sql).ToList();
+
+            Console.WriteLine("Pixels retrieved successfully!");
+
+            // Retourner la liste des pixels
+            return pixels;
+        }
+    }
+
 
     
 }
@@ -108,10 +130,13 @@ class SQLProgram
 {
     static void Main(string[] args)
     {
+        Console.WriteLine("");
         Console.WriteLine("CallofPixels SQL Communication Services");
-        Console.WriteLine("======================================\n");
+        Console.WriteLine("=======================================");
+        Console.WriteLine("Debuging mode...");
+        
 
-        var pixelService = new SqlServices();
+        var sqlCommTest = new SqlServices();
 
         List<Pixel> pixels = new List<Pixel>
         {
@@ -120,7 +145,15 @@ class SQLProgram
             new Pixel { Name = "AH", Cos = "200,500", Color = "#123abc" }
         };
         
-        pixelService.ListUpdate(pixels);
+        sqlCommTest.ListUpdate(pixels);
+        
+        var listetest = sqlCommTest.RetrievePixelList();
+
+        foreach (var pixel in listetest)
+        {
+            Console.WriteLine($"Name: {pixel.Name}, Cos: {pixel.Cos}, Color: {pixel.Color}");
+        }
+
 
     }
 }
