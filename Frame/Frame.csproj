@@ -2,11 +2,13 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
         <ApplicationIcon>img\cof.ico</ApplicationIcon>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <TargetFrameworks>net6.0-windows;net8.0-windows</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,8 +18,26 @@
     </ItemGroup>
 
     <ItemGroup>
+        
+        <Reference Include="System.Windows.Forms" />
+        <PackageReference Include="Egorozh.ColorPicker.WPF" Version="5.0.0" />
+        <PackageReference Include="Egorozh.ColorPicker.WPF.Dialog" Version="5.0.0" />
+        <PackageReference Include="Egorozh.ColorPicker.WPF.Dialog.MahApps" Version="2.4.3.2" />
+        <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+        <PackageReference Include="System.Reactive.Windows.Forms" Version="6.0.1" />
       <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
       <PackageReference Include="Xceed.Products.Wpf.Toolkit.Full" Version="4.6.24151.1544" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SQL\SQL.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="img\background.png" />
+      <Resource Include="img\background.png" />
+      <None Remove="img\back2.png" />
+      <Resource Include="img\back2.png" />
     </ItemGroup>
 
 </Project>
