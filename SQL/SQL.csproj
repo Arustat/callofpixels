@@ -8,9 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Dapper" Version="2.1.35" />
-      <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview2.24304.8" />
-      <PackageReference Include="MySql.Data" Version="9.1.0" />
+        <PackageReference Include="Dapper" Version="2.1.35"/>
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview2.24304.8"/>
+        <PackageReference Include="MySqlConnector" Version="2.4.0" />
     </ItemGroup>
 
 </Project>

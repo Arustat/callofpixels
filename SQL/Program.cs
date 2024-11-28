@@ -1,159 +1,89 @@
-﻿using Dapper;
-using MySql.Data.MySqlClient; // Utiliser MySqlConnection
-namespace SQL; 
-public class SqlServices
+﻿using System;
+using System.Collections.Generic;
+using MySqlConnector;
+using Dapper;
+
+namespace SQL
 {
-    // Chaîne de connexion fixe à la base de données 
-    private readonly string _connectionString = "Server=localhost;Database=callofpixel;Uid=root;";
-
-    // Ajout de Pixel
-    public void AddPixel(Pixel pixel)
+    public class ServicePixel
     {
-        Console.WriteLine("Adding Pixel function\n");
-        using (var connection = new MySqlConnection(_connectionString))
+        private readonly string _chaineConnexion;
+
+        // Constructeur pour initialiser la chaîne de connexion à la base de données
+        public ServicePixel(string chaineConnexion)
         {
-            //Connection à la DB
-            Console.WriteLine("Connecting...");
-            connection.Open();
-            Console.WriteLine("Connected\n");
-
-            // SQL pour ajouter un pixel
-            var sql = "INSERT INTO jeu1 (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
-            connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
-
-            Console.WriteLine($"{pixel.Name}'s Pixel with {pixel.Color} color added in position {pixel.Cos} on {DateTime.Now}\n");
+            _chaineConnexion = chaineConnexion;
         }
-    }
-    
-    
-    // Update Pixel
-    public void UpdatePixel(Pixel pixel)
-    {
-        Console.WriteLine("Updating Pixel function\n");
-        using (var connection = new MySqlConnection(_connectionString))
+
+        // Fonction pour ajouter un nouveau pixel dans la base de données
+        public bool AjouterPixel(Pixel nouveauPixel)
         {
-            Console.WriteLine("Connecting...");
-            connection.Open();
-            Console.WriteLine("Connected\n");
+            Console.WriteLine("Ajout d'un nouveau pixel...");
 
-            // Requête pour vérifier si un pixel existe déjà aux coordonnées spécifiées
-            var searchSql = "SELECT COUNT(*) FROM jeu1 WHERE Cos = @Cos";
-            int pixelCount = connection.ExecuteScalar<int>(searchSql, new { pixel.Cos });
-
-            if (pixelCount > 0)
+            // Vérification si le nouveauPixel n'est pas null
+            if (nouveauPixel == null)
             {
-                // Si un pixel existe, update
-                var updateSql = "UPDATE jeu1 SET Name = @Name, Color = @Color, Date = NOW() WHERE Cos = @Cos";
-                connection.Execute(updateSql, new { pixel.Name, pixel.Cos, pixel.Color });
-
-                Console.WriteLine($"{pixel.Name}'s Pixel updated with {pixel.Color} color at position {pixel.Cos}\n");
+                Console.WriteLine("Erreur : le pixel à ajouter est null.");
+                return false;
             }
-            else
+
+            // Insertion du pixel dans la base de données
+            using (var connexion = new MySqlConnection(_chaineConnexion))
             {
-                // Si aucun pixel n'existe aux coordonnées spécifiées, on l'ajoute à la DB
-                
-                Console.WriteLine("Not an existing pixel, creating a new one\n");
-                
-                var sql = "INSERT INTO jeu1 (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
-                connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
-                
-                Console.WriteLine($"{pixel.Name}'s Pixel with {pixel.Color} color added in position {pixel.Cos} on {DateTime.Now}\n");
-            }
-        }
-    }
-
-    //Update d'une liste de Pixels
-    public void ListUpdate(List<Pixel> pixels)
-    {
-        Console.WriteLine("Updating Pixel list function\n");
-        using (var connection = new MySqlConnection(_connectionString))
-        {
-            Console.WriteLine("Connecting...");
-            connection.Open();
-            Console.WriteLine("Connected\n");
-
-            foreach (var pixel in pixels)
-            {
-                // Requête pour vérifier si un pixel existe déjà aux coordonnées spécifiées
-                var searchSql = "SELECT COUNT(*) FROM jeu1 WHERE Cos = @Cos";
-                int pixelCount = connection.ExecuteScalar<int>(searchSql, new { pixel.Cos });
-
-                if (pixelCount > 0)
+                try
                 {
-                    // Si un pixel existe, update
-                    var updateSql = "UPDATE jeu1 SET Name = @Name, Color = @Color, Date = NOW() WHERE Cos = @Cos";
-                    connection.Execute(updateSql, new { pixel.Name, pixel.Cos, pixel.Color });
+                    connexion.Open();
+                    const string sql =
+                        "INSERT INTO jeu (Id, Name, Cos, Color, Date) VALUES (@Id, @Name, @Cos, @Color, @Date)";
 
-                    Console.WriteLine($"{pixel.Name}'s Pixel updated with {pixel.Color} color at position {pixel.Cos}\n");
+                    // Exécution de l'insertion
+                    var lignesInserees = connexion.Execute(sql, new { nouveauPixel.Id, nouveauPixel.Name, nouveauPixel.Cos, nouveauPixel.Color, nouveauPixel.Date });
+
+                    // Affichage du nombre de lignes insérées
+                    if (lignesInserees > 0)
+                    {
+                        Console.WriteLine($"Le pixel a été ajouté avec succès : Id = {nouveauPixel.Id}, Name = {nouveauPixel.Name}, Cos = {nouveauPixel.Cos}, Color = {nouveauPixel.Color}, Date = {nouveauPixel.Date}");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Échec de l'ajout du pixel.");
+                        return false;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Si aucun pixel n'existe aux coordonnées spécifiées, on l'ajoute à la DB
-                
-                    Console.WriteLine("Not an existing pixel, creating a new one\n");
-                
-                    var sql = "INSERT INTO jeu1 (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
-                    connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
-                
-                    Console.WriteLine($"{pixel.Name}'s Pixel with {pixel.Color} color added in position {pixel.Cos} on {DateTime.Now}\n");
-                }  
+                    Console.WriteLine($"Erreur lors de l'ajout du pixel : {ex.Message}");
+                    return false;
+                }
             }
         }
     }
-    
-    public List<Pixel> RetrievePixelList()
+    // Classe principale pour exécuter l'application
+    internal class Program
     {
-        using (var connection = new MySqlConnection(_connectionString))
+        private static void Main()
         {
-            Console.WriteLine("Connecting...");
-            connection.Open();
-            Console.WriteLine("Connected\n");
+            // Chaîne de connexion à la base de données MySQL
+            var chaineConnexion =
+                "Server=192.168.1.97;Port=3306;Database=callofpixels;Uid=sqlcommuser;Pwd=GHU7L8jxrs4RBjsB;";
 
-            // Requête pour récupérer tous les pixels de la table
-            var sql = "SELECT Id, Name, Cos, Color FROM jeu1";
+            // Création d'une instance du service de gestion des pixels
+            var servicePixel = new ServicePixel(chaineConnexion);
 
-            // Exécuter la requête et mapper les résultats à la classe Pixel
-            var pixels = connection.Query<Pixel>(sql).ToList();
+            // Création d'un nouveau pixel à ajouter
+            Pixel monNouveauPixel = new Pixel
+            {
+                Id = 3,
+                Name = "Pixel3",
+                Cos = "3,3",
+                Color = "#00FF00",
+                Date = DateTime.Now
+            };
 
-            Console.WriteLine("Pixels retrieved successfully!");
-
-            // Retourner la liste des pixels
-            return pixels;
+            // Ajout du nouveau pixel
+            var ajoutReussi = servicePixel.AjouterPixel(monNouveauPixel);
+            Console.WriteLine($"Ajout du pixel réussi : {ajoutReussi}");
         }
-    }
-
-
-    
-}
-
-class SQLProgram
-{
-    static void Main(string[] args)
-    {
-        Console.WriteLine("");
-        Console.WriteLine("CallofPixels SQL Communication Services");
-        Console.WriteLine("=======================================");
-        Console.WriteLine("Debuging mode...");
-        
-
-        var sqlCommTest = new SqlServices();
-
-        List<Pixel> pixels = new List<Pixel>
-        {
-            new Pixel { Name = "May", Cos = "15,41", Color = "#ffffff" },
-            new Pixel { Name = "Raff", Cos = "53,124", Color = "#ff6e4f" },
-            new Pixel { Name = "AH", Cos = "200,500", Color = "#123abc" }
-        };
-        
-        sqlCommTest.ListUpdate(pixels);
-        
-        var listetest = sqlCommTest.RetrievePixelList();
-
-        foreach (var pixel in listetest)
-        {
-            Console.WriteLine($"Name: {pixel.Name}, Cos: {pixel.Cos}, Color: {pixel.Color}");
-        }
-
-
     }
 }

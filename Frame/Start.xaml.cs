@@ -17,7 +17,7 @@ namespace Frame
 
             // Initialiser le timer avant de démarrer
             _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMilliseconds(100); // Intervalle pour mettre à jour la barre
+            _timer.Interval = TimeSpan.FromMilliseconds(200); // Intervalle pour mettre à jour la barre
             _timer.Tick += Timer_Tick;
 
             // Démarrer l'animation de la barre de progression une fois le timer prêt
