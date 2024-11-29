@@ -17,7 +17,7 @@ namespace Frame
 
             // Initialiser le timer avant de démarrer
             _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMilliseconds(200); // Intervalle pour mettre à jour la barre
+            _timer.Interval = TimeSpan.FromMilliseconds(100); // Intervalle pour mettre à jour la barre
             _timer.Tick += Timer_Tick;
 
             // Démarrer l'animation de la barre de progression une fois le timer prêt
@@ -39,6 +39,7 @@ namespace Frame
                 Backhround_image("pack://application:,,,/img/back2.png"); // Remplacer par le chemin de ton image
                 Loagind.Visibility = Visibility.Hidden;
                 LoadingBar.Visibility = Visibility.Hidden; // Cacher la barre de progression
+                TextPseudo.Visibility = Visibility.Visible;
                 PseudoBox.Visibility = Visibility.Visible; // Afficher le champ pseudo
                 StartButton.Visibility = Visibility.Visible; // Afficher le bouton de démarrage
             }

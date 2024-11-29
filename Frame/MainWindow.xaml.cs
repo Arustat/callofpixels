@@ -11,11 +11,19 @@ namespace Frame
         private ScaleTransform _scaleTransform = new ScaleTransform(1, 1); // Pour gérer le zoom
         private Brush _currentColor = Brushes.White; // La couleur actuelle des pixels
         private string _pseudo; // Nouveau champ pour le pseudo
+        
+        //Eviter conflit souris et click (jpp)
+        private bool zoommouse = false;
 
         public MainWindow(string pseudo)
         {
             InitializeComponent();
             _pseudo = pseudo; // Enregistrer le pseudo
+            TxtPseudo.Text = _pseudo;
+            
+            //Initialment zoom 
+            _scaleTransform.ScaleX = 0.24912826983452546;
+            _scaleTransform.ScaleY = 0.24912826983452546;
 
             // Appliquer le ScaleTransform à la grille pour permettre le zoom
             GrilleCanvas.LayoutTransform = _scaleTransform;
@@ -34,6 +42,9 @@ namespace Frame
             
             // Ajouter l'événement MouseWheel pour le zoom
             this.MouseWheel += MainWindow_MouseWheel;
+            
+            // Ajouter l'événement de double-clic pour zoomer sur un point spécifique
+            GrilleCanvas.PreviewMouseDown += GrilleCanvasDoubleClick;
         }
 
         // Méthode pour recevoir la nouvelle couleur et mettre à jour _currentColor
@@ -88,8 +99,21 @@ namespace Frame
         private void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             double zoomFactor = e.Delta > 0 ? 1.1 : 0.9; // Facteur de zoom
-            _scaleTransform.ScaleX *= zoomFactor;
-            _scaleTransform.ScaleY *= zoomFactor;
+
+            // Limite minimale de zoom (20%)
+            double minZoom = 0.2;
+
+            // Limite maximale de zoom (200%)
+            double maxZoom = 5.0;
+
+            // Appliquer le zoom seulement si la nouvelle échelle est dans les limites
+            if (_scaleTransform.ScaleX * zoomFactor >= minZoom && _scaleTransform.ScaleX * zoomFactor <= maxZoom)
+            {
+                _scaleTransform.ScaleX *= zoomFactor;
+                _scaleTransform.ScaleY *= zoomFactor;
+                
+                //Console.WriteLine($"Zoom X: {_scaleTransform.ScaleX}, Zoom Y: {_scaleTransform.ScaleY}");
+            }
         }
 
         // Gestion du clic sur un pixel pour changer sa couleur
@@ -99,6 +123,46 @@ namespace Frame
             {
                 // Changer la couleur du pixel au clic
                 pixel.Fill = _currentColor;
+            }
+        }
+
+        // Méthode pour gérer le double-clic sur la grille
+        private void GrilleCanvasDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // Vérifier si c'est un double-clic
+            if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
+            {
+                // Calculer la position du clic (les coordonnées du clic dans le canvas)
+                Point clickPosition = e.GetPosition(GrilleCanvas);
+
+                // Facteur de zoom de 30% (soit un zoom de 1.3)
+                double zoomFactor = 1.3;
+
+                // Calculer les nouvelles échelles de zoom
+                double newScaleX = _scaleTransform.ScaleX * zoomFactor;
+                double newScaleY = _scaleTransform.ScaleY * zoomFactor;
+
+                // Limiter les valeurs de zoom (par exemple entre 0.2 et 5)
+                double minZoom = 0.2;
+                double maxZoom = 5.0;
+                newScaleX = Math.Max(minZoom, Math.Min(newScaleX, maxZoom));
+                newScaleY = Math.Max(minZoom, Math.Min(newScaleY, maxZoom));
+
+                // Appliquer le zoom au ScaleTransform
+                _scaleTransform.ScaleX = newScaleX;
+                _scaleTransform.ScaleY = newScaleY;
+
+                // Appliquer la transformation de zoom à la grille
+                GrilleCanvas.LayoutTransform = _scaleTransform;
+
+                // Déplacer le ScrollViewer pour centrer sur le point cliqué
+                ScrollViewer scrollViewer = GrilleScrollViewer;
+                double offsetX = clickPosition.X * (zoomFactor - 1);
+                double offsetY = clickPosition.Y * (zoomFactor - 1);
+
+                // Ajuster le défilement en fonction du zoom
+                scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + offsetX);
+                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offsetY);
             }
         }
     }

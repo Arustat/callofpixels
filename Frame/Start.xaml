@@ -69,10 +69,28 @@
                          Background="Transparent" 
                          Foreground="Blue"/>
         </Border>
+        
+        <Canvas>
+            <!-- Champ de texte pour le pseudo -->
+            <TextBlock Name="TextPseudo" 
+                       Width="500" 
+                       Height="50" 
+                       FontSize="30" 
+                       FontFamily="Verdana" 
+                       Canvas.Left="372"  
+                       Canvas.Top="210"   
+                       Visibility="Hidden">
+                <Bold>Entrez votre pseudo !</Bold>
+            </TextBlock>
 
-        <!-- Champ de texte pour le pseudo -->
-        <TextBox x:Name="PseudoBox" Width="400" Height="30" VerticalAlignment="Center" 
-                 HorizontalAlignment="Center" Visibility="Hidden" Text="Entrez votre pseudo ici" />
+            <!-- Champ de saisie pour le pseudo -->
+            <TextBox x:Name="PseudoBox" 
+                     Width="400" 
+                     Height="30" 
+                     Canvas.Left="350"  
+                     Canvas.Top="260"   
+                     Visibility="Hidden" />
+        </Canvas>
         <!-- Bouton de démarrage -->
         <Button Content="Start" Visibility="Hidden" Name="StartButton" Width="200" Height="80" Margin="0,0,0,20" Style="{StaticResource StartButtonStyle}" Click="StartButton_Click" />
     </Grid>

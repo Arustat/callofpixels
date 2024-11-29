@@ -6,9 +6,23 @@
         MaxHeight="650" MaxWidth="1100">
     <Grid Name="Main">
         <!-- Conteneur du jeu -->
-        <Canvas Name="GrilleCanvas" Background="White" />
+        <ScrollViewer Name="GrilleScrollViewer">
+            <Canvas Name="GrilleCanvas" Background="Transparent" />
+        </ScrollViewer>
 
         <!-- Conteneur pour le contrôle de couleur Windows Forms -->
         <wfi:WindowsFormsHost Name="ColorButtonHost" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20"/>
+        <TextBlock Name="TxtPseudo"
+                   Margin="10,10,0,0"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   FontFamily="Verdana"
+                   Foreground="White"
+                   Background="DarkSlateBlue"
+                   Padding="10"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top">
+        </TextBlock>
     </Grid>
 </Window>
