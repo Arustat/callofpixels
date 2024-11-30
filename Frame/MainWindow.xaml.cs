@@ -6,8 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using SQL; // Importer votre namespace pour la classe Pixel
-
 namespace Frame
 {
     public partial class MainWindow : Window

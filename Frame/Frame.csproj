@@ -34,10 +34,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SQL\SQL.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="img\background.png" />
       <Resource Include="img\background.png" />
       <None Remove="img\back2.png" />
