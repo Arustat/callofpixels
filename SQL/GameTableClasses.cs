@@ -1,11 +1,10 @@
 namespace SQL;
 
-// Classe Gestion Pixels
-
 public class Pixel
 {
     public int Id { get; set; }
-    public string Name { get; set; }
-    public string Cos { get; set; }
-    public string Color { get; set; }
+    public required string Name { get; set; }
+    public required string Cos { get; set; }
+    public required string Color { get; set; }
+    public DateTime Date { get; set; }
 }

@@ -39,6 +39,7 @@ namespace Frame
                 Backhround_image("pack://application:,,,/img/back2.png"); // Remplacer par le chemin de ton image
                 Loagind.Visibility = Visibility.Hidden;
                 LoadingBar.Visibility = Visibility.Hidden; // Cacher la barre de progression
+                TextPseudo.Visibility = Visibility.Visible;
                 PseudoBox.Visibility = Visibility.Visible; // Afficher le champ pseudo
                 StartButton.Visibility = Visibility.Visible; // Afficher le bouton de démarrage
             }
