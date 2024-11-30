@@ -20,9 +20,12 @@
     <ItemGroup>
         
         <Reference Include="System.Windows.Forms" />
+        
+        <PackageReference Include="Dapper" Version="2.1.35" />
         <PackageReference Include="Egorozh.ColorPicker.WPF" Version="5.0.0" />
         <PackageReference Include="Egorozh.ColorPicker.WPF.Dialog" Version="5.0.0" />
         <PackageReference Include="Egorozh.ColorPicker.WPF.Dialog.MahApps" Version="2.4.3.2" />
+        <PackageReference Include="MySqlBackup.NET.MySqlConnector" Version="2.3.8" />
         <PackageReference Include="MySqlConnector" Version="2.4.0" />
         <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
         <PackageReference Include="System.Reactive.Windows.Forms" Version="6.0.1" />

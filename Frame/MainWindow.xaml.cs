@@ -1,8 +1,12 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using SQL; // Importer votre namespace pour la classe Pixel
 
 namespace Frame
 {
@@ -11,8 +15,11 @@ namespace Frame
         private ScaleTransform _scaleTransform = new ScaleTransform(1, 1); // Pour gérer le zoom
         private Brush _currentColor = Brushes.White; // La couleur actuelle des pixels
         private string _pseudo; // Nouveau champ pour le pseudo
-        
-        //Eviter conflit souris et click (jpp)
+        private List<Point> _pixelClickedList = new List<Point>(); // Liste pour stocker les pixels cliqués
+        private System.Timers.Timer _timer; // Timer pour envoyer la liste des pixels toutes les 3 secondes
+        private SqlServices _sqlServices; // Instance de SqlServices
+
+        // Eviter conflit souris et click (jpp)
         private bool zoommouse = false;
 
         public MainWindow(string pseudo)
@@ -20,31 +27,39 @@ namespace Frame
             InitializeComponent();
             _pseudo = pseudo; // Enregistrer le pseudo
             TxtPseudo.Text = _pseudo;
-            
-            //Initialment zoom 
+
+            // Initialement zoom
             _scaleTransform.ScaleX = 0.24912826983452546;
             _scaleTransform.ScaleY = 0.24912826983452546;
 
             // Appliquer le ScaleTransform à la grille pour permettre le zoom
             GrilleCanvas.LayoutTransform = _scaleTransform;
-            
+
             // Générer la grille de pixels
             Grille(100, 200, 20); // Grille de 100x200 avec des pixels de taille 20x20
-            
-            //Instancie la classe ColorPalette pour notre button
+
+            // Initialisation de la classe SqlServices pour l'interaction avec la base de données
+            _sqlServices = new SqlServices();
+
             var colorPalette = new ColorPalette();
-            
+
             // S'abonner à l'événement ColorChanged pour récupérer la couleur
             colorPalette.ColorChanged += OnColorChanged;
-            
-            //Ajouter le bouton Windows Forms au conteneur WindowsFormsHost
+
+            // Ajouter le bouton Windows Forms au conteneur WindowsFormsHost
             ColorButtonHost.Child = colorPalette.Controls[0];
-            
+
             // Ajouter l'événement MouseWheel pour le zoom
             this.MouseWheel += MainWindow_MouseWheel;
-            
+
             // Ajouter l'événement de double-clic pour zoomer sur un point spécifique
             GrilleCanvas.PreviewMouseDown += GrilleCanvasDoubleClick;
+
+            // Initialisation du timer pour envoyer les pixels toutes les 3 secondes
+            _timer = new System.Timers.Timer(3000); // Définir le timer pour toutes les 3 secondes
+            _timer.Elapsed += SendPixelList;
+            _timer.AutoReset = true;
+            _timer.Start();
         }
 
         // Méthode pour recevoir la nouvelle couleur et mettre à jour _currentColor
@@ -63,7 +78,7 @@ namespace Frame
         {
             // Effacer la grille précédente
             GrilleCanvas.Children.Clear();
-            
+
             for (int row = 0; row < rows; row++)
             {
                 for (int col = 0; col < cols; col++)
@@ -111,8 +126,6 @@ namespace Frame
             {
                 _scaleTransform.ScaleX *= zoomFactor;
                 _scaleTransform.ScaleY *= zoomFactor;
-                
-                //Console.WriteLine($"Zoom X: {_scaleTransform.ScaleX}, Zoom Y: {_scaleTransform.ScaleY}");
             }
         }
 
@@ -123,7 +136,73 @@ namespace Frame
             {
                 // Changer la couleur du pixel au clic
                 pixel.Fill = _currentColor;
+
+                // Récupérer les coordonnées du clic sans tenir compte du zoom
+                var position = e.GetPosition(GrilleCanvas);
+
+                // Calculer la colonne et la ligne
+                double pixelSize = pixel.Width; // Taille du pixel
+                int col = (int)(position.X / pixelSize); // Calcul de la colonne
+                int row = (int)(position.Y / pixelSize); // Calcul de la ligne
+
+                // Ajouter les coordonnées de la colonne et de la ligne à la liste
+                _pixelClickedList.Add(new Point(col, row)); // Stocker la colonne et la ligne dans la liste
             }
+        }
+
+        // Fonction appelée par le timer toutes les 3 secondes
+        private void SendPixelList(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            // Convertir les points (col, row) en Pixels pour l'envoi
+            List<Pixel> pixelList = _pixelClickedList
+                .Select(p => new Pixel
+                {
+                    Name = $"{_pseudo}_pixel",
+                    Cos = $"{p.X},{p.Y}", // Cos contient maintenant les coordonnées col,row
+                    Color = ((SolidColorBrush)_currentColor).Color.ToString(),
+                    Date = DateTime.Now
+                })
+                .ToList();
+
+            // Envoyer à la base de données
+            foreach (var pixel in pixelList)
+            {
+                Console.WriteLine($"Pixel: Name={pixel.Name}, Cos={pixel.Cos}, Color={pixel.Color}, Date={pixel.Date}");
+            }
+
+            _sqlServices.ListUpdate(pixelList);
+
+            // Récupérer la liste des pixels déjà présents dans la base de données
+            List<Pixel> retrievedPixels = _sqlServices.RetrievePixelList();
+
+            // Mettre à jour la grille avec les pixels récupérés
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                foreach (var pixel in retrievedPixels)
+                {
+                    // Transformer les coordonnées de "Cos" (ex: "10,20") en deux valeurs X et Y
+                    var coords = pixel.Cos.Split(',');
+                    int col = int.Parse(coords[0]);
+                    int row = int.Parse(coords[1]);
+
+                    // Trouver le rectangle correspondant dans la grille
+                    foreach (var child in GrilleCanvas.Children)
+                    {
+                        if (child is Rectangle rect)
+                        {
+                            var left = Canvas.GetLeft(rect);
+                            var top = Canvas.GetTop(rect);
+
+                            // Comparer les coordonnées pour voir si on doit changer la couleur du pixel
+                            if (Math.Abs(left - col * rect.Width) < 1 && Math.Abs(top - row * rect.Height) < 1)
+                            {
+                                // Mettre à jour la couleur du pixel
+                                rect.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(pixel.Color));
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         // Méthode pour gérer le double-clic sur la grille
@@ -152,17 +231,8 @@ namespace Frame
                 _scaleTransform.ScaleX = newScaleX;
                 _scaleTransform.ScaleY = newScaleY;
 
-                // Appliquer la transformation de zoom à la grille
+                // Appliquer le ScaleTransform au Canvas
                 GrilleCanvas.LayoutTransform = _scaleTransform;
-
-                // Déplacer le ScrollViewer pour centrer sur le point cliqué
-                ScrollViewer scrollViewer = GrilleScrollViewer;
-                double offsetX = clickPosition.X * (zoomFactor - 1);
-                double offsetY = clickPosition.Y * (zoomFactor - 1);
-
-                // Ajuster le défilement en fonction du zoom
-                scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + offsetX);
-                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offsetY);
             }
         }
     }
