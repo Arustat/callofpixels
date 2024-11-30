@@ -157,7 +157,7 @@ namespace Frame
             List<Pixel> pixelList = _pixelClickedList
                 .Select(p => new Pixel
                 {
-                    Name = $"{_pseudo}_pixel",
+                    Name = _pseudo,
                     Cos = $"{p.X},{p.Y}", // Cos contient maintenant les coordonnées col,row
                     Color = _currentColorFormatted, // Utiliser la couleur formatée
                     Date = DateTime.Now
