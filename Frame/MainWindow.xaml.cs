@@ -52,7 +52,7 @@ namespace Frame
             GrilleCanvas.PreviewMouseDown += GrilleCanvasDoubleClick;
 
             // Initialisation du timer pour envoyer les pixels toutes les 3 secondes
-            _timer = new System.Timers.Timer(3000); // Définir le timer pour toutes les 3 secondes
+            _timer = new System.Timers.Timer(1500); // Définir le timer pour toutes les 3 secondes
             _timer.Elapsed += SendPixelList;
             _timer.AutoReset = true;
             _timer.Start();
