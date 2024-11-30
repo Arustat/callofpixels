@@ -18,9 +18,7 @@ namespace Frame
         private List<Point> _pixelClickedList = new List<Point>(); // Liste pour stocker les pixels cliqués
         private System.Timers.Timer _timer; // Timer pour envoyer la liste des pixels toutes les 3 secondes
         private SqlServices _sqlServices; // Instance de SqlServices
-
-        // Eviter conflit souris et click (jpp)
-        private bool zoommouse = false;
+        private string _currentColorFormatted = "#FFFFFF"; // Variable pour la couleur actuelle au format hex
 
         public MainWindow(string pseudo)
         {
@@ -71,6 +69,8 @@ namespace Frame
 
             // Convertir en SolidColorBrush et mettre à jour _currentColor
             _currentColor = new SolidColorBrush(wpfColor);
+            _currentColorFormatted = $"#{wpfColor.R:X2}{wpfColor.G:X2}{wpfColor.B:X2}"; // Format hex
+            Console.WriteLine($"Couleur sélectionnée : {_currentColorFormatted}"); // Afficher la couleur dans la console
         }
 
         // Méthode pour générer la grille de pixels
@@ -159,7 +159,7 @@ namespace Frame
                 {
                     Name = $"{_pseudo}_pixel",
                     Cos = $"{p.X},{p.Y}", // Cos contient maintenant les coordonnées col,row
-                    Color = ((SolidColorBrush)_currentColor).Color.ToString(),
+                    Color = _currentColorFormatted, // Utiliser la couleur formatée
                     Date = DateTime.Now
                 })
                 .ToList();
@@ -171,6 +171,9 @@ namespace Frame
             }
 
             _sqlServices.ListUpdate(pixelList);
+
+            // Vider la liste des pixels après l'envoi
+            _pixelClickedList.Clear(); 
 
             // Récupérer la liste des pixels déjà présents dans la base de données
             List<Pixel> retrievedPixels = _sqlServices.RetrievePixelList();
@@ -194,10 +197,10 @@ namespace Frame
                             var top = Canvas.GetTop(rect);
 
                             // Comparer les coordonnées pour voir si on doit changer la couleur du pixel
-                            if (Math.Abs(left - col * rect.Width) < 1 && Math.Abs(top - row * rect.Height) < 1)
+                            if (Math.Abs(left - col * rect.Width) < 0.1 && Math.Abs(top - row * rect.Height) < 0.1)
                             {
-                                // Mettre à jour la couleur du pixel
-                                rect.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(pixel.Color));
+                                rect.Fill = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(pixel.Color));
+                                break;
                             }
                         }
                     }
@@ -205,34 +208,21 @@ namespace Frame
             });
         }
 
-        // Méthode pour gérer le double-clic sur la grille
+        // Méthode pour gérer le double-clic pour le zoom
         private void GrilleCanvasDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // Vérifier si c'est un double-clic
-            if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
+            if (e.ClickCount == 2)
             {
-                // Calculer la position du clic (les coordonnées du clic dans le canvas)
-                Point clickPosition = e.GetPosition(GrilleCanvas);
+                // Calculer la position du double-clic
+                var position = e.GetPosition(GrilleCanvas);
 
-                // Facteur de zoom de 30% (soit un zoom de 1.3)
-                double zoomFactor = 1.3;
+                // Calculer les coordonnées du pixel
+                double pixelSize = 20;
+                int col = (int)(position.X / pixelSize);
+                int row = (int)(position.Y / pixelSize);
 
-                // Calculer les nouvelles échelles de zoom
-                double newScaleX = _scaleTransform.ScaleX * zoomFactor;
-                double newScaleY = _scaleTransform.ScaleY * zoomFactor;
-
-                // Limiter les valeurs de zoom (par exemple entre 0.2 et 5)
-                double minZoom = 0.2;
-                double maxZoom = 5.0;
-                newScaleX = Math.Max(minZoom, Math.Min(newScaleX, maxZoom));
-                newScaleY = Math.Max(minZoom, Math.Min(newScaleY, maxZoom));
-
-                // Appliquer le zoom au ScaleTransform
-                _scaleTransform.ScaleX = newScaleX;
-                _scaleTransform.ScaleY = newScaleY;
-
-                // Appliquer le ScaleTransform au Canvas
-                GrilleCanvas.LayoutTransform = _scaleTransform;
+                // Afficher un message de debug pour la position du double-clic
+                Console.WriteLine($"Double-clic sur le pixel ({col}, {row})");
             }
         }
     }
