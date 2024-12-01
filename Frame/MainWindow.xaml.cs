@@ -45,7 +45,7 @@ namespace Frame
             // Configurer le timer
             _connectionTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(5) // Vérification toutes les 5 secondes
+                Interval = TimeSpan.FromSeconds(2) // Vérification toutes les 2 secondes
             };
             _connectionTimer.Tick += CheckDatabaseConnection;
             _connectionTimer.Start();
@@ -56,9 +56,9 @@ namespace Frame
             _timer.Start();
         }
         
-        private void CheckDatabaseConnection(object sender, EventArgs e)
+        private async void CheckDatabaseConnection(object sender, EventArgs e)
         {
-            if (_sqlServices.Connect())
+            if (await _sqlServices.ConnectAsync())
             {
                 Console.WriteLine("SQL connection successful. Changing color to green.");
                 Connect.Fill = Brushes.Green; // Change la couleur en vert
@@ -66,9 +66,10 @@ namespace Frame
             else
             {
                 Console.WriteLine("SQL connection failed. Changing color to red.");
-                Connect.Fill = Brushes.Red; // Sinon, change la couleur en rouge
+                Connect.Fill = Brushes.Red; // Change la couleur en rouge
             }
         }
+
 
         // Gestion du changement de couleur sélectionnée dans la palette
         private void OnColorChanged(System.Drawing.Color newColor)
