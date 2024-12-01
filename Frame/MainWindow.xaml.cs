@@ -23,6 +23,7 @@ namespace Frame
             InitializeComponent();
             _pseudo = pseudo; // Enregistrer le pseudo
             TxtPseudo.Text = _pseudo;
+            
 
             // Initialement zoom
             _scaleTransform.ScaleX = 0.24912826983452546;
