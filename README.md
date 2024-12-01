@@ -11,6 +11,17 @@ Nous avons donc lancé ce projet dans l'optique de créer un jeu simple mais amu
 
 **Version serveur:** Pas encore déployée.
 
+
+## Utilisation
+
+Dans le cadre de cette version encore en développement, il est nécessaire d'utiliser OpenVPN avec le fichier de configuration qui vous est fourni. Sans cela, aucun accès à la base de données n'est possible. 
+
+
+- [Client OpenVPN](https://openvpn.net/client/client-connect-vpn-for-windows/)
+
+Lorsqu'OpenVPN est installé, il vous suffit de double cliquer sur le fichier de configuration (.ovpn) pour l'ajouter. Une fois la connexion établie, ouvrez l'executable (CallOfPixels.exe) pour commencer à jouer.
+    
+
 ## Fonctionnalitées
 
 - Choix de pseudo
