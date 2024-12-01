@@ -45,7 +45,7 @@ namespace Frame
             // Configurer le timer
             _connectionTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(2) // Vérification toutes les 2 secondes
+                Interval = TimeSpan.FromSeconds(3) // Vérification toutes les 3 secondes
             };
             _connectionTimer.Tick += CheckDatabaseConnection;
             _connectionTimer.Start();
