@@ -31,15 +31,23 @@ public class SqlServices
         }
     }
 
-    public bool Connect()
+    public async Task<bool> ConnectAsync()
     {
         try
         {
             if (connection.State != ConnectionState.Open)
             {
-                connection.Open();
+                await connection.OpenAsync();
             }
-            return connection.State == ConnectionState.Open;
+
+            // Vérification de la connectivité 
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT 1";
+                await command.ExecuteScalarAsync();
+            }
+
+            return true;
         }
         catch (Exception ex)
         {
@@ -47,6 +55,8 @@ public class SqlServices
             return false;
         }
     }
+
+
     
     // Ajout de Pixel
     public void AddPixel(Pixel pixel)
