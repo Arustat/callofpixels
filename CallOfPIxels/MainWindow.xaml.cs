@@ -13,6 +13,7 @@ namespace Frame
     public partial class MainWindow : Window
     {
         private ToolTip _toolTip;
+
         private ScaleTransform _scaleTransform = new ScaleTransform(1, 1);
         private Brush _currentColor = Brushes.White;
         private string _pseudo;
@@ -28,14 +29,14 @@ namespace Frame
             InitializeComponent();
             _pseudo = pseudo;
             TxtPseudo.Text = _pseudo;
-            
+
             // Initialisation de ToolTip
             _toolTip = new ToolTip();
             _toolTip.Background = Brushes.White;
             _toolTip.BorderBrush = Brushes.Black;
             _toolTip.BorderThickness = new Thickness(1);
-            
-            
+
+            this.MouseMove += MainWindow_MouseMove;
             _scaleTransform.ScaleX = 0.24912826983452546;
             _scaleTransform.ScaleY = 0.24912826983452546;
             GrilleCanvas.LayoutTransform = _scaleTransform;
@@ -48,7 +49,7 @@ namespace Frame
             ColorButtonHost.Child = colorPalette.Controls[0];
             this.MouseWheel += MainWindow_MouseWheel;
             GrilleCanvas.PreviewMouseDown += GrilleCanvasDoubleClick;
-            
+
             // Configurer le timer
             _connectionTimer = new DispatcherTimer
             {
@@ -62,7 +63,7 @@ namespace Frame
             _timer.AutoReset = true;
             _timer.Start();
         }
-        
+
         private async void CheckDatabaseConnection(object sender, EventArgs e)
         {
             if (await _sqlServices.ConnectAsync())
@@ -178,7 +179,9 @@ namespace Frame
 
                             if (Math.Abs(left - col * rect.Width) < 0.1 && Math.Abs(top - row * rect.Height) < 0.1)
                             {
-                                rect.Fill = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(pixel.Color));
+                                rect.Fill = new SolidColorBrush(
+                                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(
+                                        pixel.Color));
                                 break;
                             }
                         }
@@ -199,5 +202,43 @@ namespace Frame
                 Console.WriteLine($"Double-clic sur le pixel ({col}, {row})");
             }
         }
+        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        {
+            // Récupérer la position du curseur par rapport au Canvas
+            var position = e.GetPosition(GrilleCanvas);  // Position relative au Canvas (sans défilement)
+
+            double pixelSize = 20; // Taille des pixels
+            int col = (int)(position.X / pixelSize);
+            int row = (int)(position.Y / pixelSize);
+
+            // Vérification si le pixel est déjà colorié
+            var pixel = _sqlServices.RetrievePixelList().FirstOrDefault(p =>
+            {
+                var coords = p.Cos.Split(',');
+                int pixelCol = int.Parse(coords[0]);
+                int pixelRow = int.Parse(coords[1]);
+                return pixelCol == col && pixelRow == row;
+            });
+
+            if (pixel != null)
+            {
+                // Si un pixel est trouvé, on met à jour le ToolTip
+                _toolTip.Content = $"{pixel.Name} - {pixel.Date.ToString("dd/MM/yyyy HH:mm")}";
+                _toolTip.IsOpen = true;
+
+                // Positionnement du ToolTip juste à droite du curseur, en restant à l'intérieur de la fenêtre
+                double offsetX = col - 90;  // Décale légèrement à droite
+                double offsetY = row - 90;  // Décale légèrement vers le bas
+
+                // Positionner le ToolTip avec les nouvelles coordonnées
+                _toolTip.HorizontalOffset = offsetX;
+                _toolTip.VerticalOffset = offsetY;
+            }
+            else
+            {
+                _toolTip.IsOpen = false;  // Si aucun pixel n'est trouvé, cacher le ToolTip
+            }
+        }
+
     }
 }

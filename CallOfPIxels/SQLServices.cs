@@ -155,7 +155,7 @@ public class SqlServices
             Console.WriteLine("Connected\n");
 
             // Requête pour récupérer tous les pixels de la table
-            var sql = "SELECT Id, Name, Cos, Color FROM jeu";
+            var sql = "SELECT Id, Name, Cos, Color,Date FROM jeu";
 
             // Exécuter la requête et mapper les résultats à la classe Pixel
             var pixels = connection.Query<Pixel>(sql).ToList();

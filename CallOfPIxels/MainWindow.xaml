@@ -6,9 +6,13 @@
         MaxHeight="650" MaxWidth="1100">
     <Grid Name="Main">
         <!-- Conteneur du jeu -->
-        <ScrollViewer Name="GrilleScrollViewer" >
             <Canvas Name="GrilleCanvas" Background="Transparent" />
-        </ScrollViewer>
+        
+        <Popup Name="PixelToolTipPopup" IsOpen="False">
+            <Border Background="LightGray" BorderBrush="Black" BorderThickness="1" Padding="5">
+                <TextBlock x:Name="ToolTipContent" />
+            </Border>
+        </Popup>
 
         <!-- Conteneur pour le contrôle de couleur Windows Forms -->
         <wfi:WindowsFormsHost Name="ColorButtonHost" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20"/>
