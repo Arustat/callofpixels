@@ -37,11 +37,11 @@ namespace Frame
             _toolTip.BorderThickness = new Thickness(1);
 
             this.MouseMove += MainWindow_MouseMove;
-            _scaleTransform.ScaleX = 0.24912826983452546;
-            _scaleTransform.ScaleY = 0.24912826983452546;
+            _scaleTransform.ScaleX = 0.44912826983452546;
+            _scaleTransform.ScaleY = 0.44912826983452546;
             GrilleCanvas.LayoutTransform = _scaleTransform;
 
-            Grille(100, 200, 20);
+            Grille(50, 100, 20);
 
             _sqlServices = new SqlServices();
             var colorPalette = new ColorPalette();
@@ -53,12 +53,12 @@ namespace Frame
             // Configurer le timer
             _connectionTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(3) // Vérification toutes les 3 secondes
+                Interval = TimeSpan.FromSeconds(3) // Vérification connexion toutes les 3 secondes
             };
             _connectionTimer.Tick += CheckDatabaseConnection;
             _connectionTimer.Start();
 
-            _timer = new System.Timers.Timer(1500);
+            _timer = new System.Timers.Timer(2000);
             _timer.Elapsed += SendPixelList;
             _timer.AutoReset = true;
             _timer.Start();
@@ -145,7 +145,7 @@ namespace Frame
             }
         }
 
-        // Envoie la liste des pixels cliqués à la base de données toutes les 3 secondes
+        // Envoie la liste des pixels cliqués à la base de données toutes les 2 secondes
         private void SendPixelList(object sender, System.Timers.ElapsedEventArgs e)
         {
             List<Pixel> pixelList = _pixelClickedList
@@ -224,11 +224,12 @@ namespace Frame
             {
                 // Si un pixel est trouvé, on met à jour le ToolTip
                 _toolTip.Content = $"{pixel.Name} - {pixel.Date.ToString("dd/MM/yyyy HH:mm")}";
+                // Affichage du pseudo du joueur qui a placé le pixel
                 _toolTip.IsOpen = true;
 
                 // Positionnement du ToolTip juste à droite du curseur, en restant à l'intérieur de la fenêtre
-                double offsetX = col - 90;  // Décale légèrement à droite
-                double offsetY = row - 90;  // Décale légèrement vers le bas
+                double offsetX = col - 90; 
+                double offsetY = row - 90; 
 
                 // Positionner le ToolTip avec les nouvelles coordonnées
                 _toolTip.HorizontalOffset = offsetX;
