@@ -25,6 +25,7 @@ namespace Frame
             InitializeComponent();
             _pseudo = pseudo;
             TxtPseudo.Text = _pseudo;
+            
 
             _scaleTransform.ScaleX = 0.44912826983452546;
             _scaleTransform.ScaleY = 0.44912826983452546;
