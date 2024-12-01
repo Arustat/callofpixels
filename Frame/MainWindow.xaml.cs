@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Frame
 {
@@ -18,6 +19,8 @@ namespace Frame
         private System.Timers.Timer _timer;
         private SqlServices _sqlServices;
         private string _currentColorFormatted = "#FFFFFF";
+        private DispatcherTimer _connectionTimer;
+
 
         // Constructeur principal qui initialise la fenêtre, le pseudo et les composants
         public MainWindow(string pseudo)
@@ -26,7 +29,6 @@ namespace Frame
             _pseudo = pseudo;
             TxtPseudo.Text = _pseudo;
             
-
             _scaleTransform.ScaleX = 0.24912826983452546;
             _scaleTransform.ScaleY = 0.24912826983452546;
             GrilleCanvas.LayoutTransform = _scaleTransform;
@@ -34,18 +36,41 @@ namespace Frame
             Grille(100, 200, 20);
 
             _sqlServices = new SqlServices();
+            Console.WriteLine($"Connection Status: {_sqlServices.Connect()}");
             var colorPalette = new ColorPalette();
             colorPalette.ColorChanged += OnColorChanged;
             ColorButtonHost.Child = colorPalette.Controls[0];
             this.MouseWheel += MainWindow_MouseWheel;
             GrilleCanvas.PreviewMouseDown += GrilleCanvasDoubleClick;
-
+            
+            // Configurer le timer
+            _connectionTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(5) // Vérification toutes les 5 secondes
+            };
+            _connectionTimer.Tick += ConnectCheck;
+            _connectionTimer.Start();
+            
             _timer = new System.Timers.Timer(1500);
             _timer.Elapsed += SendPixelList;
             _timer.AutoReset = true;
             _timer.Start();
         }
 
+
+        private void ConnectCheck(object sender, EventArgs e)
+        {
+            if (_sqlServices.Connect())
+            {
+                Console.WriteLine("SQL connection successful. Changing color to green.");
+                Connect.Fill = Brushes.Green; // Change la couleur en vert
+            }
+            else
+            {
+                Console.WriteLine("SQL connection failed. Changing color to red.");
+                Connect.Fill = Brushes.Red; // Sinon, change la couleur en rouge
+            }
+        }
         // Gestion du changement de couleur sélectionnée dans la palette
         private void OnColorChanged(System.Drawing.Color newColor)
         {

@@ -24,13 +24,14 @@
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top">
         </TextBlock>
+        
         <!-- Cercle rouge positionné en haut à droite -->
-        <Ellipse Width="20" Height="20" 
+        <Ellipse Name="Connect" Width="20" Height="20" 
                  Fill="Red" 
                  Stroke="Black" 
                  StrokeThickness="2"
                  HorizontalAlignment="Right" 
                  VerticalAlignment="Top" 
-                 Margin="0,10,10,0"/>
+                 Margin="0,10,30,0"/>
     </Grid>
 </Window>

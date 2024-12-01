@@ -1,28 +1,62 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using MySqlConnector;
 namespace Frame; 
 public class SqlServices
 {
     // Chaîne de connexion fixe à la base de données 
     private readonly string _connectionString = "Server=192.168.1.97;Port=3306;Database=callofpixels;Uid=sqlcommuser;Pwd=GHU7L8jxrs4RBjsB;";
+    
+    // Déclaration de la connexion à la base de données
+    private MySqlConnection connection;
 
+    // Constructeur pour initialiser la connexion
+    public SqlServices()
+    {
+        connection = new MySqlConnection(_connectionString);
+    }
+
+    // Méthode pour établir la connexion
+    public void OpenConnection()
+    {
+        try
+        {
+            Console.WriteLine("Connecting...");
+            connection.Open();
+            Console.WriteLine("Connected\n");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error connecting to the database: {ex.Message}");
+        }
+    }
+
+    public bool Connect()
+    {
+        try
+        {
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+            }
+            return connection.State == ConnectionState.Open;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error while connecting: {ex.Message}");
+            return false;
+        }
+    }
+    
     // Ajout de Pixel
     public void AddPixel(Pixel pixel)
     {
         Console.WriteLine("Adding Pixel function\n");
-        using (var connection = new MySqlConnection(_connectionString))
-        {
-            //Connection à la DB
-            Console.WriteLine("Connecting...");
-            connection.Open();
-            Console.WriteLine("Connected\n");
-
-            // SQL pour ajouter un pixel
-            var sql = "INSERT INTO jeu (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
-            connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
-
-            Console.WriteLine($"{pixel.Name}'s Pixel with {pixel.Color} color added in position {pixel.Cos} on {DateTime.Now}\n");
-        }
+        
+        // SQL pour ajouter un pixel
+        var sql = "INSERT INTO jeu (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
+        connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
+        Console.WriteLine($"{pixel.Name}'s Pixel with {pixel.Color} color added in position {pixel.Cos} on {DateTime.Now}\n");
     }
     
     
@@ -53,6 +87,7 @@ public class SqlServices
                 // Si aucun pixel n'existe aux coordonnées spécifiées, on l'ajoute à la DB
                 
                 Console.WriteLine("Not an existing pixel, creating a new one\n");
+              
                 
                 var sql = "INSERT INTO jeu (Name, Cos, Color, Date) VALUES (@Name, @Cos, @Color, NOW())";
                 connection.Execute(sql, new { pixel.Name, pixel.Cos, pixel.Color });
