@@ -112,7 +112,7 @@ namespace Frame
             }
         }
 
-        // Envoie la liste des pixels cliqués à la base de données toutes les 3 secondes
+        // Envoie la liste des pixels cliqués à la base de données toutes les 1.5 secondes
         private void SendPixelList(object sender, System.Timers.ElapsedEventArgs e)
         {
             List<Pixel> pixelList = _pixelClickedList
