@@ -66,7 +66,7 @@ public class SqlServices
         Console.WriteLine("Updating Pixel function\n");
         using (var connection = new MySqlConnection(_connectionString))
         {
-            Console.WriteLine("Connecting...");
+            Console.WriteLine("(update) Connecting...");
             connection.Open();
             Console.WriteLine("Connected\n");
 
