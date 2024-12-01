@@ -29,11 +29,11 @@ Lorsqu'OpenVPN est installé, il vous suffit de double cliquer sur le fichier de
 - Dessin sur la grille
 - Syncronisation de la grille entre joueurs
 - Témoin de connection au serveur
+- Affichage du pseudo du joueur lorsque l'on survole un pixel
 
 
 ## En cours de développement
 
-- Afficher le pseudo du joueur auquel appartient le pixel qu'on survole.
 
 - Optimisation de la récupération des pixels, modification de l'algorithme de récupération.
 
