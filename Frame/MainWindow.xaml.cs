@@ -12,6 +12,7 @@ namespace Frame
 {
     public partial class MainWindow : Window
     {
+        private ToolTip _toolTip;
         private ScaleTransform _scaleTransform = new ScaleTransform(1, 1);
         private Brush _currentColor = Brushes.White;
         private string _pseudo;
@@ -28,7 +29,13 @@ namespace Frame
             _pseudo = pseudo;
             TxtPseudo.Text = _pseudo;
             
-
+            // Initialisation de ToolTip
+            _toolTip = new ToolTip();
+            _toolTip.Background = Brushes.White;
+            _toolTip.BorderBrush = Brushes.Black;
+            _toolTip.BorderThickness = new Thickness(1);
+            
+            
             _scaleTransform.ScaleX = 0.24912826983452546;
             _scaleTransform.ScaleY = 0.24912826983452546;
             GrilleCanvas.LayoutTransform = _scaleTransform;
