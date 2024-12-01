@@ -26,11 +26,11 @@ namespace Frame
             _pseudo = pseudo;
             TxtPseudo.Text = _pseudo;
 
-            _scaleTransform.ScaleX = 0.24912826983452546;
-            _scaleTransform.ScaleY = 0.24912826983452546;
+            _scaleTransform.ScaleX = 0.44912826983452546;
+            _scaleTransform.ScaleY = 0.44912826983452546;
             GrilleCanvas.LayoutTransform = _scaleTransform;
 
-            Grille(100, 200, 20);
+            Grille(50, 100, 20);
 
             _sqlServices = new SqlServices();
             var colorPalette = new ColorPalette();
