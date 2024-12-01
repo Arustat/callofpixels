@@ -202,7 +202,7 @@ namespace Frame
                 Console.WriteLine($"Double-clic sur le pixel ({col}, {row})");
             }
         }
-        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        private async void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
             // Récupérer la position du curseur par rapport au Canvas
             var position = e.GetPosition(GrilleCanvas);  // Position relative au Canvas (sans défilement)
@@ -211,7 +211,8 @@ namespace Frame
             int col = (int)(position.X / pixelSize);
             int row = (int)(position.Y / pixelSize);
 
-            // Vérification si le pixel est déjà colorié
+            // Vérification si le pixel est déjà colorié + Délai avant d'afficher la tooltip 
+            await Task.Delay(500);
             var pixel = _sqlServices.RetrievePixelList().FirstOrDefault(p =>
             {
                 var coords = p.Cos.Split(',');
@@ -239,7 +240,7 @@ namespace Frame
             {
                 _toolTip.IsOpen = false;  // Si aucun pixel n'est trouvé, cacher le ToolTip
             }
+            
         }
-
     }
 }
