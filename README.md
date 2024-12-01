@@ -7,7 +7,7 @@ Nous avons donc lancé ce projet dans l'optique de créer un jeu simple mais amu
 
 ## Informations
 
-**Version client:** dev-v0.1.0
+**Version client:** dev-v0.1.2
 
 **Version serveur:** Pas encore déployée.
 
